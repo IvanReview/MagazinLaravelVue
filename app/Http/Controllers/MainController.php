@@ -41,7 +41,7 @@ class MainController extends Controller
             ->parentCat()
             ->OrderBy('created_at', 'DESC')
             ->get();
-            
+
         return response()->json($categories, 200);
     }
 
@@ -59,6 +59,8 @@ class MainController extends Controller
         // parent и status скоупы
         $comments = $product->comments()->parent()->status()->with('replies', 'replies.replies')->get();
         $users = User::get();
+        $product = $product::with('galleryImages')->find($product->id);
+
 
         return response()->json(['product'=>$product, 'comments'=>$comments, 'users'=>$users],200);
     }
@@ -74,14 +76,14 @@ class MainController extends Controller
     public function changeCurrency(Request $request)
     {
         CurrencyRates::getRates();
-        $currencyCode = $request->currency;
+        $currencyCode = $request->currency_code;
         $currency = Currency::byCode($currencyCode)->first();
 
         $kef = CurrencyConversion::convert($currency->code);
         $code = $currency->code;
 
 
-        return response()->json(['currency_coefficient' => $kef, 'currency_code' => $code],200);
+        return response()->json(['id'=>$currency->id,'currency_coefficient' => $kef, 'currency_code' => $code],200);
 
     }
 

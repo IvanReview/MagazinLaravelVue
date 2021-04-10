@@ -225,6 +225,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -234,10 +237,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       tooltip: null,
       search_pattern: '',
       currencyOption: ['RUB', 'USD', 'EUR'],
-      currency: 'RUB'
+      currency_code: '',
+      disabled: false
     };
   },
-  computed: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapGetters"])(['getProductsInCart', 'getRole', 'getIsLogged'])), {}, {
+  computed: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapGetters"])(['getProductsInCart', 'getRole', 'getIsLogged', 'getCurrency'])), {}, {
+    //отключить переключение валют при переходе в корзину
+    disabled_select: function disabled_select() {
+      if (this.$route.name === 'Cart') {
+        setTimeout(function () {
+          window.M.AutoInit();
+        }, 200);
+        return true;
+      } else {
+        setTimeout(function () {
+          window.M.AutoInit();
+        }, 200);
+        return false;
+      }
+    },
     totalCostInCart: function totalCostInCart() {
       var cost = 0;
       this.getProductsInCart.forEach(function (item) {
@@ -246,15 +264,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return cost;
     }
   }),
-  methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapActions"])(['searchProductsInBd', 'logoutStore', 'changeCurrencyInState', 'loadProducts'])), {}, {
+  methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapActions"])(['searchProductsInBd', 'logoutStore', 'changeCurrencyInState', 'loadProducts', 'clearCart'])), {}, {
     searchProducts: function searchProducts() {
       this.searchProductsInBd(this.search_pattern);
     },
     changeCurrency: function changeCurrency() {
       var _this = this;
 
-      this.changeCurrencyInState(this.currency).then(function (resp) {
-        _this.currency_coefficient = resp.data.currency_coefficient;
+      this.changeCurrencyInState(this.currency_code).then(function (resp) {
+        _this.clearCart();
       });
       window.M.AutoInit();
     },
@@ -276,7 +294,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.loadProducts();
     }
   }),
-  mounted: function mounted() {},
+  mounted: function mounted() {
+    this.currency_code = this.getCurrency.currency_code;
+  },
   destroyed: function destroyed() {}
 });
 
@@ -751,12 +771,13 @@ var render = function() {
                               {
                                 name: "model",
                                 rawName: "v-model",
-                                value: _vm.currency,
-                                expression: "currency"
+                                value: _vm.currency_code,
+                                expression: "currency_code"
                               }
                             ],
                             ref: "currency",
                             staticClass: "browser-default1",
+                            attrs: { disabled: _vm.disabled_select },
                             on: {
                               change: [
                                 function($event) {
@@ -769,29 +790,32 @@ var render = function() {
                                         "_value" in o ? o._value : o.value
                                       return val
                                     })
-                                  _vm.currency = $event.target.multiple
+                                  _vm.currency_code = $event.target.multiple
                                     ? $$selectedVal
                                     : $$selectedVal[0]
                                 },
                                 function($event) {
-                                  return _vm.changeCurrency(_vm.currency)
+                                  return _vm.changeCurrency()
                                 }
                               ]
                             }
                           },
                           [
-                            _c(
-                              "option",
-                              {
-                                attrs: { value: "", disabled: "", selected: "" }
-                              },
-                              [_vm._v(" Выберите валюту ")]
-                            ),
+                            _c("option", { attrs: { disabled: "" } }, [
+                              _vm._v("Выберите валюту")
+                            ]),
                             _vm._v(" "),
-                            _vm._l(_vm.currencyOption, function(item) {
+                            _vm._l(_vm.currencyOption, function(item, index) {
                               return _c(
                                 "option",
-                                { domProps: { value: item } },
+                                {
+                                  key: index,
+                                  domProps: {
+                                    value: item,
+                                    selected:
+                                      _vm.getCurrency.currency_code === item
+                                  }
+                                },
                                 [
                                   _vm._v(
                                     " " +

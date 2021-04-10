@@ -21,21 +21,23 @@ class CartController extends Controller
      */
     public function orderConfirm(OrderRequest $request)
     {
+
         $data = $request->all();
+
         $this->order = Order::create($data);
 
 
         //вставка записей в промежуточную таблицу
         foreach ($request->productsInCart as $product){
-            $this->order->products()->attach($product['id'], ['quantity'=> $product['quantity']]);
+            $this->order->products()->attach($product['id'],['quantity'=> $product['quantity'], 'price' => $product['price']]);
         }
 
         //изменение количества товара в базе
         if ($this->changeCountProduct()){
 
             $order = $this->order::with('products')->find($this->order->id);
+
             //отправка уведомления администратору
-            
             Mail::to('andreyvictorov98@gmail.com')->send(new OrderMail($order));
 
             return response()->json($order, 200);
@@ -56,7 +58,7 @@ class CartController extends Controller
         foreach ($this->order->products as $productInOrder ){
             //количество в заказе(промежуточная таблица)
             $quantity = $this->order->products()->where('product_id', $productInOrder->id)->first()->pivot->quantity;
-            //кол-во на складе
+            //кол-во на складе(поле продукта)
             $productInOrder->count = $productInOrder->count - $quantity;
 
             if ($productInOrder->count < 0) {

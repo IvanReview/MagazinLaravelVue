@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateProductRequest;
-use App\Http\Requests\updateProductRequest;
+use App\Http\Requests\UpdateProductRequest;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -54,7 +54,7 @@ class ProductController extends Controller
 
                 $gall_data['name'] = $path;
 
-                 $productModel->galleryImages()->create($gall_data);
+                $productModel->galleryImages()->create($gall_data);
             }
             $productEnd = Product::with('galleryImages')->find($productModel['id']);
         }
@@ -91,9 +91,51 @@ class ProductController extends Controller
         }
 
 
-        if ($product->update($data)){
+        //потом крепить галлерею
+        if ($data['gallery_img']) {
+            $old_img = collect($data['gallery_img'])->filter(function ($value, $key) {
+                if (is_string($value)) return $value;
+                    else return [];
+            });
 
-            return response()->json($product, 200);
+            $new_img = collect($data['gallery_img'])->filter(function ($value) {
+                if (is_file($value)) return $value;
+                    else return [];
+            });
+
+            $old_gallery_images = $product->galleryImages()->whereNotIn('id', $old_img)->get();
+            //удаляем изобр из бд
+            foreach ($old_gallery_images as $model_img ){
+                $model_img->delete();
+                Storage::delete($model_img->name);
+            }
+
+            foreach ($new_img as $key => $fileItem) {
+                //если файл значит изобр вновь загруженно
+
+                $path = $fileItem->store('products');
+
+                $gall_data['name'] = $path;
+
+                $product->galleryImages()->create($gall_data);
+            }
+
+        } else {
+            //если массив пуст удаляем все изобр галлереи для товара
+            $old_gallery_images = $product->galleryImages()->get();
+            foreach ($old_gallery_images as $model_img ){
+                $model_img->delete();
+                Storage::delete($model_img->name);
+            }
+        }
+
+        $success = $product->update($data);
+
+        $productEnd = $product::with('galleryImages')->find($product->id);
+
+        if ($success){
+
+            return response()->json($productEnd, 200);
         } else{
             return response()->json($product, 500);
         }

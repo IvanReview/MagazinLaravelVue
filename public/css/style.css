@@ -87,3 +87,20 @@ main {
     text-align: center;
     align-items: center;
 }
+
+.gallery_container-edit{
+    max-width: 100%;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.empty_container{
+    height: 82px;
+    width: 82px;
+}
+
+.empty_container-edit{
+    height: 82px;
+    width: 82px;
+}

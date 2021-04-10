@@ -5,7 +5,18 @@
             <div class="row">
                 <div class="col s12 l6">
                     <div class="images-product">
-                        <img class="materialboxed1" width="500" :src="`/storage/${product.image}`" alt="prod">
+                        <img class="materialboxed" :src="`/storage/${product.image}`" alt="prod" ref="main_img">
+                    </div>
+
+                <!--Галлерея-->
+                    <div class="thumbs">
+                        <div class="thumb"
+                             v-for="image in gallery_images"
+                             :key="image.id"
+                             @click="showImage(image)"
+                        >
+                            <img :src="`/storage/${image.name}`" >
+                        </div>
                     </div>
                 </div>
 
@@ -15,8 +26,12 @@
                         <h2 class="product-name"><a href="#">{{product.name}}</a></h2>
 
                         <div class="price">
-                            <div><span class="amount">$ {{product.price | currencyFilter}}</span></div>
-                            <div><span class="discount">$ {{product.price*1.2}}</span></div>
+                            <div><span class="amount">
+                                {{product.price* getCurrency.currency_coefficient| currencyFilter(getCurrency.currency_code)}}
+                            </span></div>
+                            <div><span class="discount">
+                                {{(product.price*1.2)*getCurrency.currency_coefficient| currencyFilter(getCurrency.currency_code) }}
+                            </span></div>
                         </div>
                         <div class="des">
                             <p>{{product.description}}</p>
@@ -80,6 +95,7 @@
                 </div>
             </div>
 
+        <!--//акардеон-->
             <div class="tabs-container">
                 <div class="row">
                     <div class="col s12">
@@ -89,6 +105,7 @@
                             <li class="tab col s3 last" ><a href="#test3">Теги</a></li>
                         </ul>
                     </div>
+
                     <div id="test1" class="col s12">
                         <div id="tab-description" class="tab-content tab-des clearfix" style="display: block;">
                             <h3>In a free hour, when our power of choice</h3>
@@ -100,7 +117,7 @@
                     </div>
 
                     <!--комментарии-->
-                    <div id="test2" class="col s12">
+                    <!--                    <div id="test2" class="col s12">
                         <div id="tab-reviews" class="tab-content tab-rev clearfix">
                             <div class="col s12 l7">
                                 <div class="no-review" v-if="!comments.length">
@@ -129,7 +146,7 @@
                                                     </button>
                                                 </div>
                                             </li>
-                                            <!--Дочернии комментарии-->
+                                            &lt;!&ndash;Дочернии комментарии&ndash;&gt;
                                             <li class="review-item child" v-for="comm in comment_status_filter(comment.replies)">
                                                 <div class="images">
                                                     <img :src="comm.user_id ?`/storage/${authorOfComment(comm).image}`:'/img/avata-02.jpg'" alt="">
@@ -149,14 +166,12 @@
                                                     </button>
                                                 </div>
                                             </li>
-
                                         </div>
-
                                     </ul>
                                 </div>
                             </div>
 
-                           <!-- Форма комментариев-->
+                           &lt;!&ndash; Форма комментариев&ndash;&gt;
                             <div class="col s12 l5">
                                 <div class="form-review">
                                     <h3 class="form-rev">
@@ -182,7 +197,7 @@
                                         >
                                             {{ errorsComment.text[0] }}
                                         </span>
-                                    <!--<div class="submit">
+                                    &lt;!&ndash;<div class="submit">
                                         <div class="rating-rev">
                                             <div class="rating-star">
                                                 <input type="radio" name="star-horizontal-rating" id="star-horizontal-rating-1">
@@ -196,7 +211,7 @@
                                                 <input type="radio" name="star-horizontal-rating" id="star-horizontal-rating-5">
                                                 <label for="star-horizontal-rating-5"><i class="fa fa-star"></i></label>
                                             </div>
-                                        </div>-->
+                                        </div>&ndash;&gt;
                                             <div class="subreview">
                                                 <button type="submit" class="btn" ref="btnSubmit">
                                                     <i class="material-icons left">comment</i>
@@ -208,7 +223,13 @@
                                 </div>
                             </div>
 
-                    </div>
+                    </div>-->
+                    <Reviews
+                        :comment_prop="comment"
+                        :comments_prop="comments"
+                        :users_prop="users"
+                        :prod-id_prop="prodId"
+                    />
 
                     <div id="test3" class="col s12">
                         <div id="tab-add_tags" class="tab-content add-tags clearfix">
@@ -235,10 +256,12 @@
 import {mapActions, mapGetters} from "vuex";
 import * as auth from '../../../helpers/http_service';
 import * as buttons from "../../../helpers/load_buttons";
+import Reviews from "./Reviews";
 
 
 export default {
     name: "OneProduct",
+    components: {Reviews},
     props: {
 
     },
@@ -248,6 +271,7 @@ export default {
         comments: {},
         loader: true,
         users: [],
+        gallery_images: [],
         comment: {
             name: '',
             text: '',
@@ -255,9 +279,8 @@ export default {
             product_id: '',
             user_id: ''
         },
-        replyingTo: {},
         btnOldHtml: '',
-        errorsComment: []
+
     }),
     beforeRouteEnter(to, from, next){
         next(vm => {
@@ -267,7 +290,8 @@ export default {
     computed: {
         ...mapGetters([
             'getProductsInCart',
-            'getErrorsWriteComment'
+            'getErrorsWriteComment',
+            'getCurrency'
         ]),
     },
     methods: {
@@ -278,25 +302,9 @@ export default {
             'totalSumInCart',
             'addProductsToCart'
         ]),
-        authorOfComment(comment) {
-            let user = this.users.find(item => item.id == comment.user_id)
-            return user
-        },
 
-        comment_status_filter(comments) {
-            return comments.filter((comment)=> Number(comment.status) !== 0)
-
-        },
-
-        setReplyingTo(comment) {
-            this.comment.parent_id = comment.id
-            this.replyingTo = comment
-
-            this.$refs.form.scrollIntoView({behavior: "smooth", block: "center"});
-            setTimeout(() => {
-                this.$refs.inputName.focus()
-            },200)
-
+        showImage(image) {
+            this.$refs.main_img.src = `/storage/${image.name}`
         },
 
         productQuantity() {
@@ -307,7 +315,11 @@ export default {
         fetchData() {
             axios.get(`/api/product/${this.prodId}`)
                 .then(response => {
-                    
+
+                    this.gallery_images = response.data.product.gallery_images
+                    //добавит главное изображение в галлер, чтобы можно было перекл назад
+                    this.gallery_images.push({id: Math.floor(Math.random()*100), name:response.data.product.image})
+
                     this.product = response.data.product
                     this.comments = response.data.comments
                     this.users = response.data.users
@@ -316,7 +328,10 @@ export default {
         },
 
         addToCart() {
-            this.addProductsToCart(this.product)
+            let product = this.product
+            let currency = this.getCurrency
+
+            this.addProductsToCart({product, currency})
                 .then(resp => {
                     if (! resp) {
                         this.$toasted.show(`Товар ${this.product.name} добавлен успешно!`,{
@@ -332,7 +347,6 @@ export default {
                 })
 
         },
-
 
         decrementItem(product) {
             let index =  this.getProductsInCart.findIndex((product) => product.id == this.prodId )
@@ -353,39 +367,6 @@ export default {
             }
         },
 
-        commentAdd() {
-            buttons.disableSubmission(this.$refs.btnSubmit)
-            axios({
-                method: 'POST',
-                url: `/api/product/${this.prodId}/comment`,
-                data: this.comment,
-            })
-                .then((response) => {
-                    buttons.enableSubmission(this.$refs.btnSubmit)
-
-                    if (! this.replyingTo.id) {
-                        this.comments.push(response.data)
-                    } else {
-                        //дочерний коммент
-                        let index = this.comments.findIndex(item => item.id === response.data.parent_id)
-                        this.comments[index].replies.push(response.data)
-                        /*this.replyingTo.replies.push(response.data)*/
-                    }
-                    this.comment = {}
-                    this.comment.parent_id = '0'
-                    this.errorsComment = []
-
-                    this.$toasted.show(`Комментарий успешно добавлен`,{
-                        position: "bottom-left",
-                    })
-
-                })
-                .catch((error) => {
-                    buttons.enableSubmission(this.$refs.btnSubmit)
-                    this.errorsComment = error.response.data.errors
-                    console.log(error)
-                })
-        },
 
     },
     created() {
@@ -399,10 +380,6 @@ export default {
 
     },
     mounted() {
-        if (auth.getProfile() !== null) {
-            this.comment.user_id = auth.getProfile().id
-            this.comment.name = auth.getProfile().name
-        }
 
     }
 }
@@ -411,28 +388,37 @@ export default {
 <style scoped>
     .images-product{
         border: 2px solid #d6a279;
+        background-color: #fff;
     }
-    .child {
-        margin-left: 100px;
+    .images-product img {
+        max-width: 500px;
+        max-height: 700px;
     }
 
-    .disabled {
-        pointer-events: none;
-        opacity: 0.4;
-    }
-    .review-text {
-        width: 100%;
-    }
-    .review-item{
-        border: 1px solid rgba(192,192,192, 0.4);
-        padding: 10px;
-        margin-bottom: 10px;
-    }
-    #test2{
-        padding-bottom: 40px;
-
-    }
     .images img {
         width: 70px;
+    }
+
+    .thumbs {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 30px 0;
+    }
+    .thumbs .thumb {
+        max-height: 150px;
+        display: flex;
+        text-align: center;
+        align-items: center;
+        max-width: 90px;
+        border: 1px dashed teal;
+        margin: 7px 7px;
+        min-width: 80px;
+        background-color: #fff;
+
+    }
+
+    .thumbs .thumb img {
+       max-width: 100%;
     }
 </style>

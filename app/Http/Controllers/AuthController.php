@@ -91,7 +91,7 @@ class AuthController extends Controller
         }
         else{
             return response()->json([
-                'message'     =>    'Ошибка при создании авторизации',
+                'message'     =>    'Ошибка при  авторизации',
                 'status_code' =>    500
             ],500);
         }

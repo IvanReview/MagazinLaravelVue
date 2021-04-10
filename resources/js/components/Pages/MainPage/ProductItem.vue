@@ -72,7 +72,7 @@ export default {
     },
     methods: {
         addToCart(){
-            this.$emit('addToCartData', this.product, this.index)
+            this.$emit('addToCartData', this.product, this.index, this.getCurrency)
         },
 
     },

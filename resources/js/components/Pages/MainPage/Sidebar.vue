@@ -43,7 +43,10 @@
 
                     <div class="f-price__column">
                         <button class="btn btn-dashed textup filter-btn" @click="filterPrice">фильтр</button>
-                        <span class="amount">${{this.minPrice}} - ${{this.maxPrice}}</span>
+                        <span class="amount">
+                            {{ ((this.minPrice* getCurrency.currency_coefficient).toFixed(1)) | currencyFilter(getCurrency.currency_code)}} -
+                            {{ ((this.maxPrice* getCurrency.currency_coefficient).toFixed(1)) | currencyFilter(getCurrency.currency_code)}}
+                        </span>
                     </div>
                 </div>
 
@@ -149,7 +152,8 @@ export default {
     },
     computed: {
         ...mapGetters([
-            'getCategories'
+            'getCategories',
+            'getCurrency',
         ]),
     },
     mounted() {
@@ -161,7 +165,7 @@ export default {
         noUiSlider.create(slider, {
             start: [2000, 10000],
             connect: true,
-            step: 100,
+            step: 200,
             orientation: 'horizontal',
             range: {
                 'min': 0,
@@ -193,6 +197,18 @@ export default {
         padding: 1rem;
         background-color: #fff;
         border-bottom: 1px solid #ddd;
+    }
+    .f-price__column {
+        display: flex;
+    }
+
+    .f-price__column .amount{
+        margin-left: 20px;
+
+    }
+
+    .f-price__column .filter-btn{
+        margin-top: 7px;
     }
 
 </style>

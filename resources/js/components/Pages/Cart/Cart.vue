@@ -61,7 +61,7 @@
                                 </a>
                             </td>
                             <td class="product-price">
-                                <p class="price">{{product.price | currencyFilter}}</p>
+                                <p class="price">{{product.price  | currencyFilter(getCurrency.currency_code)}}</p>
                             </td>
                             <td>
                                 <div class="quantity">
@@ -75,7 +75,9 @@
                                 </div>
                             </td>
                             <td class="product-subtotal">
-                                <p class="price">{{product.quantity * product.price | currencyFilter}}</p>
+                                <p class="price">
+                                    {{product.quantity * product.price  | currencyFilter(getCurrency.currency_code)}}
+                                </p>
                             </td>
                         </tr>
 
@@ -129,7 +131,11 @@
 
                             <div class="cart-subtotal 	line">
                                 <div class="line-title">Стоимость товара:</div>
-                                <div><strong><span class="amount">{{fullSumInCart() | currencyFilter}}</span></strong></div>
+                                <div><strong>
+                                    <span class="amount">
+                                        {{fullSumInCart() | currencyFilter(getCurrency.currency_code)}}
+                                    </span>
+                                </strong></div>
                             </div>
 
                             <div class="shipping line">
@@ -141,7 +147,7 @@
                                 <div class="line-title">Общая сумма заказа:</div>
                                 <div class="black-bg">
                                     <strong><span class="amount">
-                                        {{ Math.floor(fullSumInCart()*1.2)|currencyFilter}}
+                                        {{ Math.floor(fullSumInCart()*1.0) | currencyFilter(getCurrency.currency_code)}}
                                     </span></strong>
                                 </div>
                             </div>
@@ -186,6 +192,7 @@ export default {
     computed: {
         ...mapGetters([
             'getProductsInCart',
+            'getCurrency'
         ]),
 
     },
@@ -225,7 +232,7 @@ export default {
         },
     },
     mounted() {
-        M.AutoInit();
+        window.M.AutoInit();
     }
 }
 </script>

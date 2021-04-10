@@ -102,14 +102,17 @@
                                 <li class="currency-item">
                                     <!--Валюта-->
                                     <div class="input-field col s12 m3 ">
-                                        <div class="currency">
+                                        <div class="currency" >
                                             <select class="browser-default1"
-                                                    v-model="currency"
-                                                    @change="changeCurrency(currency)" ref="currency"
+                                                    :disabled="disabled_select"
+                                                    v-model="currency_code"
+                                                    @change="changeCurrency()" ref="currency"
                                             >
-                                                <option value="" disabled selected> Выберите валюту </option>
-                                                <option v-for="item in currencyOption"
+                                                <option disabled>Выберите валюту</option>
+                                                <option v-for="(item, index) in currencyOption"
+                                                        :key="index"
                                                         :value="item"
+                                                        :selected="getCurrency.currency_code === item"
                                                 > {{item}}
                                                 </option>
                                             </select>
@@ -157,7 +160,9 @@ export default {
             tooltip: null,
             search_pattern: '',
             currencyOption: ['RUB', 'USD', 'EUR'],
-            currency: 'RUB',
+            currency_code: '',
+            disabled: false
+
 
         }
     },
@@ -166,7 +171,26 @@ export default {
             'getProductsInCart',
             'getRole',
             'getIsLogged',
+            'getCurrency'
         ]),
+
+        //отключить переключение валют при переходе в корзину
+        disabled_select() {
+            if (this.$route.name === 'Cart') {
+                setTimeout(() => {
+                    window.M.AutoInit();
+                }, 200)
+
+                return true
+
+            } else {
+                setTimeout(() => {
+                    window.M.AutoInit();
+                }, 200)
+
+                return false
+            }
+        },
         totalCostInCart() {
             let cost = 0
             this.getProductsInCart.forEach(item => {
@@ -180,7 +204,8 @@ export default {
             'searchProductsInBd',
             'logoutStore',
             'changeCurrencyInState',
-            'loadProducts'
+            'loadProducts',
+            'clearCart'
         ]),
         searchProducts() {
             this.searchProductsInBd(this.search_pattern)
@@ -188,10 +213,12 @@ export default {
         },
 
         changeCurrency(){
-            this.changeCurrencyInState(this.currency).then(resp => {
-                this.currency_coefficient = resp.data.currency_coefficient
-                
+
+            this.changeCurrencyInState(this.currency_code).then(resp => {
+
+                this.clearCart()
             })
+
             window.M.AutoInit();
         },
 
@@ -213,6 +240,7 @@ export default {
         }
     },
     mounted() {
+        this.currency_code = this.getCurrency.currency_code
 
     },
 

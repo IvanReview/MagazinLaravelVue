@@ -114,6 +114,7 @@ export default {
 
                     //параметры для пагинации makePagination в хелпере
                     const pagination = paginate.makePaginationForAdmin(response.data.products)
+                
                     commit('set_paginate_for_admin_product', pagination)
 
                     /*commit('reset_filters')*/
@@ -134,7 +135,7 @@ export default {
                 }})
                 .then((response) => {
                     if (response.status === 200){
-                        console.log(response.data)
+
                         commit('add_product_to_state', response.data)
                         commit('set_errors_create_product', [])
                         return response

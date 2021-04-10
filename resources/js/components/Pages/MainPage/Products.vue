@@ -57,6 +57,7 @@
                     :product = "product"
                     :index = "index"
                     @addToCartData = addToCartParent
+
                 />
 
             </div>
@@ -108,6 +109,7 @@ export default {
         Loader, ProductItem,
     },
     data: () => ({
+        currency_id: '',
         pagination: {},
         loader: true,
         itemsOnPage: [6, 9, 12, 25, 50],
@@ -141,8 +143,9 @@ export default {
         },
 
         //привязан к дочернему (data отуда)
-        addToCartParent(product, index){
-            this.addProductsToCart(product)
+        addToCartParent(product, index, currency){
+
+            this.addProductsToCart({product, currency})
                 .then(resp => {
                     if (!resp) {
                         this.$toasted.show(`Товар ${product.name} добавлен успешно!`,{

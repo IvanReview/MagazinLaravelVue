@@ -10,7 +10,7 @@ class CurrencyConversion
 {
     protected static $currency;
     protected static $currencies;
-    const DEFAULT_CURRENCY_CODE = 'RUB';
+    const DEFAULT_CURRENCY_CODE = 'EUR';
 
     /**
      *

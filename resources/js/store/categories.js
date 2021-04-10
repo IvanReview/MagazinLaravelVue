@@ -46,6 +46,7 @@ export default {
         loadMoreCategories({commit,state}) {
             axios.get(`/api/admin/categories?page=${state.paginate.nextPage}`)
                 .then((response) => {
+
                     if (response.data.current_page < response.data.last_page){
                         state.paginate.moreExists = true
                         state.paginate.nextPage = response.data.current_page + 1

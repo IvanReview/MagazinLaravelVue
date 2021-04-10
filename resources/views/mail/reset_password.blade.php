@@ -8,8 +8,8 @@
     <title>Document</title>
 </head>
 <body>
-        <h3>Код подтверждения</h3>
-        <p>{{$user['random']}}</p>
+        <h3 style="background-color: #f8f8f8;">Код подтверждения</h3>
+        <p style='padding: 10px; border: #e9e9e9 1px solid;'>{{$user['random']}}</p>
 
 
 </body>

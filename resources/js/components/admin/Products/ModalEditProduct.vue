@@ -143,16 +143,17 @@
                 <div class="col s12">
                     <label><strong>Галерея изображений(удаление по клику):</strong></label>
 
-                    <div class="gallery_container">
-                        <div class="vg-dotted-square vg-center empty_container"
+                    <div class="gallery_container-edit">
+                        <div class="vg-dotted-square vg-center"
                              ref="empty_container"
-                             v-for="image in product_data.gallery_images"
+                             v-for="(image, index) in product_data.gallery_images"
+                             @click="deleteDisplayImageForEditOld(index)"
                         >
-                            <img :src="`/storage/${image.name}`" class="img_item" style="width: 70px"/>
+                            <img v-if="" :src="`/storage/${image.name}`" class="img_item" style="width: 70px"/>
 
                         </div>
 
-                        <div class="vg-dotted-square vg-center empty_container" ref="empty_container"></div>
+<!--                        <div class="vg-dotted-square vg-center empty_container-edit" ref="empty_container"></div>-->
 
                     </div>
 
@@ -199,14 +200,22 @@ import {mapActions, mapGetters} from "vuex";
     export default {
         name: "ModalEditProduct",
         props: {
-            product_data: {}
+            product_data: {},
         },
         data() {
             return {
                 categoryEdit: {},
-                modalInstanceEditProduct: null
-
+                modalInstanceEditProduct: null,
+                fileStore: [],
             }
+        },
+        watch: {
+            /*fileStore() {
+                this.product_data.gallery_img  = this.fileStore.filter((file) => file !== "undefined")
+            },*/
+           /* product_data() {
+                this.fileStore =  this.product_data.gallery_images
+            }*/
         },
         methods: {
             ...mapActions([
@@ -229,25 +238,24 @@ import {mapActions, mapGetters} from "vuex";
                 });
             },
 
+
             attachImageEditProductGallery(){
 
                 let files = this.$refs.editProductImageGallery.files
-                /*this.productCreate.gallery_img = files*/
 
-                let parentContainer = document.querySelector('.gallery_container')
-                let container = parentContainer.querySelectorAll('.empty_container')
+                let parentContainer = document.querySelector('.gallery_container-edit')
+                let container = parentContainer.querySelectorAll('.empty_container-edit')
 
-
-                //если количество файлов > количества контейнеров добавляем еще
+                //если количество файлов > количества контейнеров добавляем еще контейнеры
                 if(container.length < files.length){
 
                     for (let index = 0; index < files.length - container.length; index++){
 
                         let el = document.createElement('div')
-                        el.classList.add('vg-dotted-square', 'vg-center', 'empty_container')
+                        el.classList.add('vg-dotted-square', 'vg-center', 'empty_container-edit', 'newImage')
                         parentContainer.append(el)
                     }
-                    container = parentContainer.querySelectorAll('.empty_container')
+                    container = parentContainer.querySelectorAll('.empty_container-edit')
                 }
 
 
@@ -256,16 +264,15 @@ import {mapActions, mapGetters} from "vuex";
 
                         let addElemId = this.fileStore.push(files[i]) - 1
 
-                        this.showImageGallery(files[i], container[i])
+                        this.showImageGalleryForEdit(files[i], container[i])
 
-                        this.deleteDisplayImage(addElemId, container[i])
+                        this.deleteDisplayImageForEdit(addElemId, container[i])
                     }
                 }
-
             },
 
             //показвть изображения галлереи
-            showImageGallery(file, container) {
+            showImageGalleryForEdit(file, container) {
                 let reader = new FileReader()
 
                 //содержимое контейнера удаляем
@@ -281,14 +288,13 @@ import {mapActions, mapGetters} from "vuex";
                     //вставляем в img файл
                     container.querySelector('img').setAttribute('src', reader.result)
 
-                    container.classList.remove('empty_container')
-
+                    container.classList.remove('empty_container-edit')
                 };
 
             },
 
             //удалить изображение по клику
-            deleteDisplayImage(addElemId, container){
+            deleteDisplayImageForEdit(addElemId, container){
 
                 container.addEventListener('click',  () => {
 
@@ -298,11 +304,21 @@ import {mapActions, mapGetters} from "vuex";
                     //и файл из переменной
                     delete this.fileStore[addElemId]
 
-                    this.productCreate.gallery_img  = this.fileStore.filter((file) => file !== "undefined")
+                    this.$refs.editProductImageGallery2.value = ''
                 })
             },
 
+            //удалить старое изображение по клику
+            deleteDisplayImageForEditOld(elemId, container=false){
+
+                this.product_data.gallery_images.splice(elemId, 1)
+            },
+
             sendUpdateProduct() {
+                //сливаем два массива с файлами старые файлы и новые
+                let gall_files = this.product_data.gallery_images.map((item) => { return item.id})
+                let filesAll = gall_files.concat(this.fileStore.filter(item => item !== "undefined"))
+
                 let formData = new FormData();
                 formData.append('id', this.product_data.id)
                 formData.append('name', this.product_data.name)
@@ -314,6 +330,16 @@ import {mapActions, mapGetters} from "vuex";
                 formData.append('image', this.product_data.image)
                 formData.append('_method', 'PUT')
 
+                if (filesAll.length) {
+
+                    filesAll.forEach((file, index) => {
+                        formData.append(`${'gallery_img'}[${index}]`, file)
+                    })
+                } else {
+                    formData.append('gallery_img', '')
+                }
+
+
                 this.productUpdateAdmin(formData)
                     .then(resp => {
                         if (resp.status === 200) {
@@ -321,6 +347,18 @@ import {mapActions, mapGetters} from "vuex";
                                 type: 'success',
                             })
                             this.modalInstanceEditProduct.close()
+
+                            //очистка всего
+                            this.fileStore = []
+                            let containerOld = document.querySelectorAll('.newImage')
+
+                            for (let i in containerOld){
+                                if(containerOld.hasOwnProperty(i))
+                                    containerOld[i].remove()
+                            }
+
+                            this.$refs.editProductImageGallery2.value = ''
+                            this.$refs.editProductImageGallery2.classList.remove('valid')
                         }
                     })
             }

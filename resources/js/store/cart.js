@@ -11,14 +11,20 @@ export default {
     },
     actions: {
 
-        addProductsToCart({commit, state}, product) {
+        addProductsToCart({commit, state}, {product, currency}) {
 
-            //добавление поля количество к объекту
+            //добавление поля количество к объекту и клонирование
             let productNewView = Object.assign({}, product, {quantity: 1})
 
-            //находим индекс товара в корзине если число товара на складе = чис в заказе то больше тов. заказать нельзя
+            //преобразования для валюты
+            productNewView['currency_id'] = currency.id
+            productNewView.price = (productNewView.price * currency.currency_coefficient).toFixed(2)
+
+
+            //находим индекс товара в корзине
             let index = state.cart.findIndex(item => item.id === product.id)
 
+            //если число товара на складе = числу в заказе то больше тов. заказать нельзя
             if(state.cart[index]){
                 if (state.cart[index].quantity === product.count) {
                     return true
@@ -56,7 +62,7 @@ export default {
                     /*'Content-Type': 'multipart/form-data'*/
                 }})
                 .then((response) => {
-                    commit('clearCart')
+                    commit('clear_cart')
                     commit('set_errors_order',[])
                     return response
                 })
@@ -87,6 +93,10 @@ export default {
             })
             return sum
         },
+
+        clearCart({commit}) {
+            commit('clear_cart')
+        }
 
     },
     mutations: {
@@ -126,8 +136,9 @@ export default {
             window.localStorage.setItem('cart', JSON.stringify(state.cart));
         },
 
-        clearCart(state){
+        clear_cart(state){
             state.cart = []
+            window.localStorage.removeItem('cart');//удаление корзины из стореджа
         },
 
         set_errors_order(state, errors) {

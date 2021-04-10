@@ -50,6 +50,7 @@ export default new Vuex.Store({
     mutations: {
         authenticate(state, payload) {
             state.isLoggedIn = auth.isLoggedIn()
+            
             if(state.isLoggedIn){
                 state.profile = payload
             } else {

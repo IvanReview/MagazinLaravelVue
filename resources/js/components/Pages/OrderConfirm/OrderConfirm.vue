@@ -280,7 +280,7 @@
                                                     <span class="product-qty">
                                                         <a href="">{{product.name}}</a>  <span class="count"> x {{product.quantity}}</span>
                                                     </span>
-                                                    <span class="price">${{product.price}}</span>
+                                                    <span class="price">{{product.price | currencyFilter(getCurrency.currency_code)}}</span>
                                                 </li>
 
                                             </ul>
@@ -288,7 +288,7 @@
                                     </tr>
                                     <tr class="cart-subtotal">
                                         <th>Общая стоимость:</th>
-                                        <td><strong><span class="amount">${{totalCostInCart}}</span></strong></td>
+                                        <td><strong><span class="amount">${{totalCostInCart | currencyFilter(getCurrency.currency_code)}}</span></strong></td>
                                     </tr>
                                     <tr class="shipping">
                                         <th>Доставка:</th>
@@ -296,7 +296,7 @@
                                     </tr>
                                     <tr class="order-total grey darken-4 white-text">
                                         <th><div class="black-bg">Общая сумма заказа:</div></th>
-                                        <td><div class="black-bg"><span class="amount">${{totalCostInCart}}</span></div></td>
+                                        <td><div class="black-bg"><span class="amount">${{totalCostInCart | currencyFilter(getCurrency.currency_code)}}</span></div></td>
                                     </tr>
                                     </tbody></table>
                             </div><!-- .product-total -->
@@ -385,6 +385,7 @@ export default {
         user_id: '',
         confirmPersonalData: false,
         btnOldHtml: '',
+        currency_id: ''
 
 
     }),
@@ -392,7 +393,8 @@ export default {
         ...mapGetters([
             'getProductsInCart',
             'getFullSum',
-            'getOrderConfirmErrors'
+            'getOrderConfirmErrors',
+            'getCurrency'
         ]),
         totalCostInCart() {
             let cost = 0
@@ -417,16 +419,16 @@ export default {
                 address: this.address,
                 postIndex: this.postIndex,
                 productsInCart: this.getProductsInCart,
-                user_id: this.user_id
+                user_id: this.user_id,
+                currency_id: this.getCurrency.id
             };
-
 
             if (this.confirmPersonalData){
                 //отключение кнопки
                 buttons.disableSubmission(this.$refs.btnSubmit)
+
                 this.orderSend(orderData).then(response => {
                     if (response.status === 200){
-                        window.localStorage.removeItem('cart');
                         buttons.enableSubmission(this.$refs.btnSubmit)
 
                         this.$toasted.show('Заказ принят в обработку!',{
@@ -469,6 +471,7 @@ export default {
             this.phone = user.phone
             this.surname = user.surname
         }
+
 
 
         M.AutoInit();

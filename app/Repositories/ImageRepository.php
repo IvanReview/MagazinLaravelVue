@@ -39,6 +39,7 @@ class ImageRepository
 
         $height = $img->height();
         $width = $img->width();
+
         if($height >= 601) {
             $img->resize(null, 800, function ($constraint) {
                 $constraint->aspectRatio();
