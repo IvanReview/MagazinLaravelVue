@@ -1,4 +1,5 @@
 *
 !.gitignore
-!images
-!no_photo.jpg
+!/images
+!*.jpg
+!*.jpeg
