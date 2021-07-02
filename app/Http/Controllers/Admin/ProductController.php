@@ -19,7 +19,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::with('galleryImages')->OrderBy('created_at', 'DESC')->paginate(6);
+        $products = Product::with('galleryImages')->orderBy('created_at', 'DESC')->paginate(6);
         $categories = Category::all();
         $categories_tree = Category::with('children_cat')->parentCat()->get();
 
@@ -68,14 +68,15 @@ class ProductController extends Controller
         }
     }
 
+
     /**
      * Обновление отредактированного продукта
      *
-     * @param \Illuminate\Http\Request $request
+     * @param UpdateProductRequest $request
      * @param Product $product
      * @return \Illuminate\Http\JsonResponse
      */
-    public function update(UpdateProductRequest $request, Product $product)
+    public function update(UpdateProductRequest $request, Product $product): \Illuminate\Http\JsonResponse
     {
 
         $data = $request->all();
@@ -93,6 +94,7 @@ class ProductController extends Controller
 
         //потом крепить галлерею
         if ($data['gallery_img']) {
+            //Разделяем старые и новые изображения(старые -строка, новые - файл)
             $old_img = collect($data['gallery_img'])->filter(function ($value, $key) {
                 if (is_string($value)) return $value;
                     else return [];
@@ -103,6 +105,7 @@ class ProductController extends Controller
                     else return [];
             });
 
+            //старые изображения котор хотим удалить
             $old_gallery_images = $product->galleryImages()->whereNotIn('id', $old_img)->get();
             //удаляем изобр из бд
             foreach ($old_gallery_images as $model_img ){
@@ -141,14 +144,15 @@ class ProductController extends Controller
         }
     }
 
+
     /**
-     * Remove the specified resource from storage.
+     * Удалить продукт
      *
      * @param Product $product
      * @return \Illuminate\Http\JsonResponse
      * @throws \Exception
      */
-    public function destroy(Product $product)
+    public function destroy(Product $product): \Illuminate\Http\JsonResponse
     {
         if($product->delete()){
             Storage::delete($product->image);

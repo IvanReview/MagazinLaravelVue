@@ -14,7 +14,7 @@ export default {
     actions: {
         loadComments({commit, state}, page_url) {
 
-            let url = page_url|| "/api/admin/comments"
+            let url = page_url || "/api/admin/comments"
             return  axios({
                 method: 'GET',
                 url: url,

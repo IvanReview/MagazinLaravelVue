@@ -43,7 +43,7 @@ export default {
                 })
         },
 
-        loadMoreCategories({commit,state}) {
+        loadMoreCategories({commit, state}) {
             axios.get(`/api/admin/categories?page=${state.paginate.nextPage}`)
                 .then((response) => {
 
@@ -63,7 +63,7 @@ export default {
         },
 
 
-
+        //создать категорию
         categoryCreateAdmin({commit}, formData) {
             //файлы слать обязательно через FormData и заголовки добавлять
 
@@ -94,6 +94,7 @@ export default {
                 })
         },
 
+        //обновить категорию
         categoryUpdateAdmin({commit}, formData) {
 
             return  axios({
@@ -123,6 +124,7 @@ export default {
                 })
         },
 
+        //Удалить категорию
         categoryDeleteAdmin({commit}, {categoryId, index}) {
             return axios({
                 method: 'DELETE',
@@ -138,7 +140,6 @@ export default {
                     console.log(error)
                 })
         }
-
 
     },
     mutations: {
@@ -212,7 +213,6 @@ export default {
 
 
 
-
         getErrorsCreateCategory(state) {
             return state.errorsCreate
         },
@@ -225,8 +225,6 @@ export default {
         getPaginateForCategories(state) {
             return state.paginate
         }
-
-
 
     }
 }

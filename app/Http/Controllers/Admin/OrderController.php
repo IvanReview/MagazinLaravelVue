@@ -19,7 +19,9 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        $orders = Order::with('products')->orderBy('created_at', 'desc')->paginate(7);
+        $orders = Order::with(['products', 'currency'])
+                        ->orderBy('created_at', 'desc')
+                        ->paginate(7);
 
         return response()->json($orders, 200);
     }
@@ -39,7 +41,14 @@ class OrderController extends Controller
 
     }
 
-    public function update(Request $request, $id)
+    /**
+     * Перевести в выполнено
+     *
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(Request $request, $id): \Illuminate\Http\JsonResponse
     {
         $order = Order::find($id);
         $data = $request->all();
@@ -54,7 +63,7 @@ class OrderController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Удалить
      *
      * @param Order $order
      * @return \Illuminate\Http\JsonResponse

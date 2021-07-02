@@ -30,9 +30,19 @@ class OrderMail extends Mailable
      */
     public function build()
     {
-        $fullSum = $this->order->calculateFullSum();
 
         return $this->subject('Письмо из моего магазина')
-            ->view('mail.order_mail', ['order' => $this->order, 'fullSum'=> $fullSum]);
+            ->view('mail.order_mail', ['order' => $this->order, 'fullSum'=> $this->totalSum($this->order)]);
+    }
+
+
+    public function totalSum($order)
+    {
+        $sum = 0;
+        foreach ($order->products as $product) {
+            $sum += $product->pivot->price * $product->pivot->quantity;
+        }
+
+        return $sum;
     }
 }

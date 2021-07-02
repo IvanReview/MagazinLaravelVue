@@ -26,7 +26,6 @@ class CartController extends Controller
 
         $this->order = Order::create($data);
 
-
         //вставка записей в промежуточную таблицу
         foreach ($request->productsInCart as $product){
             $this->order->products()->attach($product['id'],['quantity'=> $product['quantity'], 'price' => $product['price']]);
@@ -35,13 +34,14 @@ class CartController extends Controller
         //изменение количества товара в базе
         if ($this->changeCountProduct()){
 
-            $order = $this->order::with('products')->find($this->order->id);
+            $order = $this->order::with(['products', 'currency'])->find($this->order->id);
 
             //отправка уведомления администратору
-            Mail::to('andreyvictorov98@gmail.com')->send(new OrderMail($order));
+            Mail::to('ryab-ivan@yandex.ru')->send(new OrderMail($order));
 
             return response()->json($order, 200);
         } else {
+
             return response()->json(["message"=>"Продукт кончился пока, вы делали заказ"], 500);
         }
 

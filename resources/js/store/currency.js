@@ -4,7 +4,7 @@ let currencyInStore = window.localStorage.getItem('currency');
 
 export default {
     state: {
-        currency: currencyInStore ? JSON.parse(currencyInStore) : {currency_coefficient: 1, currency_code: 'RUB', id: 1}
+        currency: currencyInStore ? JSON.parse(currencyInStore) : {currency_coefficient: 1, currency_code: 'EUR', id: 3}
 
     },
     actions: {

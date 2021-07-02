@@ -256,6 +256,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         return false;
       }
     },
+    //Стоимость товаров в корзине
     totalCostInCart: function totalCostInCart() {
       var cost = 0;
       this.getProductsInCart.forEach(function (item) {

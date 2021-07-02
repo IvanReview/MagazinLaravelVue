@@ -32,7 +32,7 @@ class ImageRepository
 
 
         //Resize image here
-        $thumbnailPath = storage_path('app/public/user/'.$fileNameToStore);
+        $thumbnailPath = storage_path('app/public/user/' . $fileNameToStore);
         $imageInDBPath = 'user/' . $fileNameToStore;
 
         $img = \Image::make($file);

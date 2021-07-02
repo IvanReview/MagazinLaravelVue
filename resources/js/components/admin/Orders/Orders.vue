@@ -59,7 +59,7 @@
 
                                 <button class="btn waves-effect waves-light pink darken-1"
                                         type="submit"
-                                        @click="deleteOrder"
+                                        @click="deleteOrder(order, index)"
                                 >
                                     <i class="material-icons">delete</i>
                                 </button>
@@ -75,7 +75,8 @@
         <!--Модальное окно просмотра заказа-->
         <modal-look-order
             :order="order_data"
-            :products-in-order="product_in_order"
+            :products-in-order="products_in_order"
+            :currency = currency_in_order
             :total_sum="totalSumInOrder"
             @executeOrder = changeOrderStatus
         />
@@ -122,7 +123,8 @@
         components: {Loader, ModalLookOrder},
         data: ()=>({
             order_data: {},
-            product_in_order: [],
+            products_in_order: [],
+            currency_in_order: {},
             loader: true,
 
         }),
@@ -136,8 +138,8 @@
 
             totalSumInOrder() {
                 let cost = 0
-                this.product_in_order.forEach(item => {
-                  cost += item.price * item.pivot.quantity
+                this.products_in_order.forEach(item => {
+                  cost += item.pivot.price * item.pivot.quantity
                 })
                 return cost
             }
@@ -153,7 +155,9 @@
             ]),
             openOrder(order) {
                 this.order_data = order
-                this.product_in_order = order.products
+                this.products_in_order = order.products
+                this.currency_in_order = order.currency
+
             },
 
             changeOrderStatus(order) {
@@ -164,9 +168,9 @@
                 })
             },
 
-            deleteOrder() {
+            deleteOrder(order, index) {
                 if(confirm('Точно???')) {
-                    this.deleteOrderFromBd()
+                    this.deleteOrderFromBd({order, index})
                 }
             }
 

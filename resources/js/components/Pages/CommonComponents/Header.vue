@@ -162,8 +162,6 @@ export default {
             currencyOption: ['RUB', 'USD', 'EUR'],
             currency_code: '',
             disabled: false
-
-
         }
     },
     computed: {
@@ -191,6 +189,8 @@ export default {
                 return false
             }
         },
+
+        //Стоимость товаров в корзине
         totalCostInCart() {
             let cost = 0
             this.getProductsInCart.forEach(item => {

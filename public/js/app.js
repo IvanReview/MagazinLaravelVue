@@ -115398,6 +115398,7 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error);
       });
     },
+    //создать категорию
     categoryCreateAdmin: function categoryCreateAdmin(_ref4, formData) {
       var commit = _ref4.commit;
       //файлы слать обязательно через FormData и заголовки добавлять
@@ -115426,6 +115427,7 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
+    //обновить категорию
     categoryUpdateAdmin: function categoryUpdateAdmin(_ref5, formData) {
       var commit = _ref5.commit;
       return axios({
@@ -115454,6 +115456,7 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
+    //Удалить категорию
     categoryDeleteAdmin: function categoryDeleteAdmin(_ref6, _ref7) {
       var commit = _ref6.commit;
       var categoryId = _ref7.categoryId,
@@ -115683,8 +115686,8 @@ var currencyInStore = window.localStorage.getItem('currency');
   state: {
     currency: currencyInStore ? JSON.parse(currencyInStore) : {
       currency_coefficient: 1,
-      currency_code: 'RUB',
-      id: 1
+      currency_code: 'EUR',
+      id: 3
     }
   },
   actions: {

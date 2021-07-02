@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 class CommentController extends Controller
 {
     /**
+     * Добавить комментарий к продукту
+     *
      * @param Request $request
      * @param $id
      */

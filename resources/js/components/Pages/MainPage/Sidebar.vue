@@ -44,15 +44,15 @@
                     <div class="f-price__column">
                         <button class="btn btn-dashed textup filter-btn" @click="filterPrice">фильтр</button>
                         <span class="amount">
-                            {{ ((this.minPrice* getCurrency.currency_coefficient).toFixed(1)) | currencyFilter(getCurrency.currency_code)}} -
-                            {{ ((this.maxPrice* getCurrency.currency_coefficient).toFixed(1)) | currencyFilter(getCurrency.currency_code)}}
+                            {{ ((minPrice * getCurrency.currency_coefficient).toFixed(1)) | currencyFilter(getCurrency.currency_code)}} -
+                            {{ ((maxPrice * getCurrency.currency_coefficient).toFixed(1)) | currencyFilter(getCurrency.currency_code)}}
                         </span>
                     </div>
                 </div>
 
             </aside>
 
-            <aside class="widget">
+<!--            <aside class="widget">
 
                 <h3 class="widget-title">By Brands</h3>
 
@@ -106,7 +106,7 @@
 
                 </ul>
 
-            </aside>
+            </aside>-->
 
         </div>
     </div>
@@ -121,8 +121,8 @@ export default {
     name: "Sidebar",
     data: () => ({
         activeIndex: 0,
-        minPrice: 20000,
-        maxPrice: 150000,
+        minPrice: 200,
+        maxPrice: 1500,
 
     }),
     methods: {
@@ -139,6 +139,7 @@ export default {
             this.loadProducts()
         },
 
+        //взять товары определенной категории
         sortByCategory(category, index) {
             this.activeIndex = index + 1
             this.optionViewProducts({categoryId: category.id})
@@ -163,13 +164,13 @@ export default {
 
         const slider = document.getElementById('test-slider');
         noUiSlider.create(slider, {
-            start: [2000, 10000],
+            start: [2000, 6000],
             connect: true,
             step: 200,
             orientation: 'horizontal',
             range: {
                 'min': 0,
-                'max': 15000
+                'max': 8000
             },
             format: wNumb({
                 decimals: 0

@@ -121,13 +121,14 @@ class AuthController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function resetPasswordRequest(Request $request)
+    public function resetPasswordRequest(Request $request): \Illuminate\Http\JsonResponse
     {
         $request->validate([
             'email' => 'required|email'
         ]);
 
         $user = User::where('email', $request->email)->first();
+
         if (!$user){
             return response()->json([
                 'message' => 'Данный email не найден!',
@@ -138,6 +139,7 @@ class AuthController extends Controller
 
             $random = rand(11111, 99999);
             $user->verification_code = $random;
+
             if ($user->save()){
                 $userData = [
                     'email' => $user->email,
@@ -156,6 +158,7 @@ class AuthController extends Controller
                         'message' => 'Some error, Try again',
                         'status_code' => 500
                     ], 500);
+
                 } else {
                     return response()->json([
                         'message' => 'Мы отправили код подтверждения на ваш email адрес',

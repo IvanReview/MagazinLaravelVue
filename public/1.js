@@ -237,6 +237,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -612,8 +613,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   data: function data() {
     return {
       activeIndex: 0,
-      minPrice: 20000,
-      maxPrice: 150000
+      minPrice: 200,
+      maxPrice: 1500
     };
   },
   methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapActions"])(['loadCategories', 'loadProducts', 'optionViewProducts'])), {}, {
@@ -623,6 +624,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.activeIndex = 0;
       this.loadProducts();
     },
+    //взять товары определенной категории
     sortByCategory: function sortByCategory(category, index) {
       this.activeIndex = index + 1;
       this.optionViewProducts({
@@ -644,13 +646,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     M.AutoInit();
     var slider = document.getElementById('test-slider');
     materialize_css_extras_noUiSlider_nouislider__WEBPACK_IMPORTED_MODULE_0___default.a.create(slider, {
-      start: [2000, 10000],
+      start: [2000, 6000],
       connect: true,
       step: 200,
       orientation: 'horizontal',
       range: {
         'min': 0,
-        'max': 15000
+        'max': 8000
       },
       format: wnumb__WEBPACK_IMPORTED_MODULE_1___default()({
         decimals: 0
@@ -1722,7 +1724,7 @@ var render = function() {
                 return _c("li", { key: category.id }, [
                   _c("div", { staticClass: "collapsible-header" }, [
                     _vm._v(
-                      _vm._s(category.name) + "\n                        "
+                      _vm._s(category.name) + "\n                            "
                     ),
                     _c("i", { staticClass: "material-icons" }, [
                       _vm._v("arrow_drop_down")
@@ -1781,36 +1783,30 @@ var render = function() {
               _vm._v(" "),
               _c("span", { staticClass: "amount" }, [
                 _vm._v(
-                  "\n                        " +
+                  "\n                            " +
                     _vm._s(
                       _vm._f("currencyFilter")(
                         (
-                          this.minPrice * _vm.getCurrency.currency_coefficient
+                          _vm.minPrice * _vm.getCurrency.currency_coefficient
                         ).toFixed(1),
                         _vm.getCurrency.currency_code
                       )
                     ) +
-                    " -\n                        " +
+                    " -\n                            " +
                     _vm._s(
                       _vm._f("currencyFilter")(
                         (
-                          this.maxPrice * _vm.getCurrency.currency_coefficient
+                          _vm.maxPrice * _vm.getCurrency.currency_coefficient
                         ).toFixed(1),
                         _vm.getCurrency.currency_code
                       )
                     ) +
-                    "\n                    "
+                    "\n                        "
                 )
               ])
             ])
           ])
-        ]),
-        _vm._v(" "),
-        _vm._m(1),
-        _vm._v(" "),
-        _vm._m(2),
-        _vm._v(" "),
-        _vm._m(3)
+        ])
       ]
     )
   ])
@@ -1822,127 +1818,6 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "collapsible-body" }, [
       _c("span", [_vm._v("Товары всех категорий")])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("aside", { staticClass: "widget" }, [
-      _c("h3", { staticClass: "widget-title" }, [_vm._v("By Brands")]),
-      _vm._v(" "),
-      _c("ul", [
-        _c("li", [
-          _c("a", { attrs: { href: "#" } }, [
-            _vm._v("Hermes "),
-            _c("span", { staticClass: "count" }, [_vm._v("(20)")])
-          ])
-        ]),
-        _vm._v(" "),
-        _c("li", [
-          _c("a", { attrs: { href: "#" } }, [
-            _vm._v("Delce & Gabbana "),
-            _c("span", { staticClass: "count" }, [_vm._v("(16)")])
-          ])
-        ]),
-        _vm._v(" "),
-        _c("li", [
-          _c("a", { attrs: { href: "#" } }, [
-            _vm._v("Louis Vuitton "),
-            _c("span", { staticClass: "count" }, [_vm._v("(28)")])
-          ])
-        ]),
-        _vm._v(" "),
-        _c("li", [
-          _c("a", { attrs: { href: "#" } }, [
-            _vm._v("Versace "),
-            _c("span", { staticClass: "count" }, [_vm._v("(45)")])
-          ])
-        ]),
-        _vm._v(" "),
-        _c("li", [
-          _c("a", { attrs: { href: "#" } }, [
-            _vm._v("Hug Boss "),
-            _c("span", { staticClass: "count" }, [_vm._v("(12)")])
-          ])
-        ]),
-        _vm._v(" "),
-        _c("li", [
-          _c("a", { attrs: { href: "#" } }, [
-            _vm._v("Zara "),
-            _c("span", { staticClass: "count" }, [_vm._v("(33)")])
-          ])
-        ])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("aside", { staticClass: "widget" }, [
-      _c("h3", { staticClass: "widget-title" }, [_vm._v("By Colors")]),
-      _vm._v(" "),
-      _c("ul", [
-        _c("li", [
-          _c("a", { attrs: { href: "#" } }, [
-            _vm._v("Red "),
-            _c("span", { staticClass: "count" }, [_vm._v("(120)")])
-          ])
-        ]),
-        _vm._v(" "),
-        _c("li", [
-          _c("a", { attrs: { href: "#" } }, [
-            _vm._v("White "),
-            _c("span", { staticClass: "count" }, [_vm._v("(65)")])
-          ])
-        ]),
-        _vm._v(" "),
-        _c("li", [
-          _c("a", { attrs: { href: "#" } }, [
-            _vm._v("Black "),
-            _c("span", { staticClass: "count" }, [_vm._v("(87)")])
-          ])
-        ]),
-        _vm._v(" "),
-        _c("li", [
-          _c("a", { attrs: { href: "#" } }, [
-            _vm._v("Blue "),
-            _c("span", { staticClass: "count" }, [_vm._v("(25)")])
-          ])
-        ])
-      ])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("aside", { staticClass: "widget" }, [
-      _c("h3", { staticClass: "widget-title" }, [_vm._v("By Size")]),
-      _vm._v(" "),
-      _c("ul", [
-        _c("li", [
-          _c("a", { attrs: { href: "#" } }, [
-            _vm._v("X - Small "),
-            _c("span", { staticClass: "count" }, [_vm._v("(20)")])
-          ])
-        ]),
-        _vm._v(" "),
-        _c("li", [
-          _c("a", { attrs: { href: "#" } }, [
-            _vm._v("Small "),
-            _c("span", { staticClass: "count" }, [_vm._v("(65)")])
-          ])
-        ]),
-        _vm._v(" "),
-        _c("li", [
-          _c("a", { attrs: { href: "#" } }, [
-            _vm._v("Medium "),
-            _c("span", { staticClass: "count" }, [_vm._v("(87)")])
-          ])
-        ])
-      ])
     ])
   }
 ]

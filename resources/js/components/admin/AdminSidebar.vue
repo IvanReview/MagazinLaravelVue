@@ -5,7 +5,9 @@
                 <div class="background">
                     <img src="https://avatanplus.com/files/resources/original/5732d250e3a1a1549e858c24.jpg">
                 </div>
-                <a href="#user"><img class="circle" :src="`/storage/${getProfile.image}`"></a>
+                <a href="#user">
+                    <img class="circle" :src="getProfile.image ? `/storage/${getProfile.image}` : '/storage/no_photo.jpg' ">
+                </a>
                 <a href="#name"><span class="white-text name">SUPERUSER: {{getProfile.name}}</span></a>
                 <a href="#email"><span class="white-text email">{{getProfile.email}}</span></a>
             </div></li>

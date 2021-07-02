@@ -20,6 +20,8 @@ class UserController extends Controller
     public $my;
 
     /**
+     * Отобразить пользоват в админке
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function index()
@@ -31,7 +33,14 @@ class UserController extends Controller
     }
 
 
-    public function store(Request $request, User $user)
+    /**
+     *
+     *
+     * @param Request $request
+     * @param User $user
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function store(Request $request, User $user): \Illuminate\Http\JsonResponse
     {
 
         if ($user->save()){
@@ -43,7 +52,14 @@ class UserController extends Controller
 
     }
 
-    public function update(Request $request, User $user)
+    /**
+     * Обновить пользователя
+     *
+     * @param Request $request
+     * @param User $user
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(Request $request, User $user): \Illuminate\Http\JsonResponse
     {
         $request->validate([
             'email' => 'required|email',
@@ -82,7 +98,14 @@ class UserController extends Controller
     }
 
 
-    public function destroy(User $user)
+    /**
+     * Удалить пользователя
+     *
+     * @param User $user
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
+     */
+    public function destroy(User $user): \Illuminate\Http\JsonResponse
     {
         if($user->delete()){
             Storage::delete($user->image);

@@ -2,6 +2,7 @@
     <div class="col s12 m6 l4">
         <div class="card">
             <div class="card-image">
+
                 <img :src="product.image ? `/storage/${product.image}` : `/storage/no_photo.jpg`" alt="Product">
                 <a class="btn-floating halfway-fab waves-effect waves-light red modal-trigger"
                    :href="'#modal3' + product.id"

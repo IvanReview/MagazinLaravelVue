@@ -146,6 +146,7 @@
 
             deleteCategory(categoryId, index) {
                 if (confirm("Вы уверены??")){
+                    
                     this.categoryDeleteAdmin({categoryId: categoryId, index: index})
                         .then(resp => {
                             this.$toasted.show(`Категория успешно удалена!`,{

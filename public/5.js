@@ -102,11 +102,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "ModalLookOrder",
   props: {
     order: {},
     productsInOrder: {},
+    currency: {},
     total_sum: 0
   },
   data: function data() {
@@ -120,6 +122,7 @@ __webpack_require__.r(__webpack_exports__);
       this.$emit('executeOrder', this.order);
     }
   },
+  updated: function updated() {},
   mounted: function mounted() {
     this.modalInstanceOrder = window.M.Modal.init(this.$refs.modalOrder);
   }
@@ -260,6 +263,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
 
 
 
@@ -272,15 +276,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   data: function data() {
     return {
       order_data: {},
-      product_in_order: [],
+      products_in_order: [],
+      currency_in_order: {},
       loader: true
     };
   },
   computed: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapGetters"])(['getOrders', 'getFullSum', 'getOrderConfirmErrors', 'getPaginateOrder'])), {}, {
     totalSumInOrder: function totalSumInOrder() {
       var cost = 0;
-      this.product_in_order.forEach(function (item) {
-        cost += item.price * item.pivot.quantity;
+      this.products_in_order.forEach(function (item) {
+        cost += item.pivot.price * item.pivot.quantity;
       });
       return cost;
     }
@@ -288,7 +293,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapActions"])(['totalSumInCart', 'orderSend', 'loadOrders', 'changeOrder', 'deleteOrderFromBd'])), {}, {
     openOrder: function openOrder(order) {
       this.order_data = order;
-      this.product_in_order = order.products;
+      this.products_in_order = order.products;
+      this.currency_in_order = order.currency;
     },
     changeOrderStatus: function changeOrderStatus(order) {
       var _this = this;
@@ -299,9 +305,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         });
       });
     },
-    deleteOrder: function deleteOrder() {
+    deleteOrder: function deleteOrder(order, index) {
       if (confirm('Точно???')) {
-        this.deleteOrderFromBd();
+        this.deleteOrderFromBd({
+          order: order,
+          index: index
+        });
       }
     }
   }),
@@ -618,7 +627,12 @@ var render = function() {
                         _c("td", [
                           _vm._v(
                             " " +
-                              _vm._s(_vm._f("currencyFilter")(product.price))
+                              _vm._s(
+                                _vm._f("currencyFilter")(
+                                  product.pivot.price,
+                                  _vm.currency.code
+                                )
+                              )
                           )
                         ]),
                         _vm._v(" "),
@@ -627,7 +641,8 @@ var render = function() {
                             " " +
                               _vm._s(
                                 _vm._f("currencyFilter")(
-                                  product.pivot.quantity * product.price
+                                  product.pivot.quantity * product.pivot.price,
+                                  _vm.currency.code
                                 )
                               )
                           )
@@ -642,7 +657,12 @@ var render = function() {
                         _c("strong", [
                           _vm._v(
                             " " +
-                              _vm._s(_vm._f("currencyFilter")(_vm.total_sum))
+                              _vm._s(
+                                _vm._f("currencyFilter")(
+                                  _vm.total_sum,
+                                  _vm.currency.code
+                                )
+                              )
                           )
                         ])
                       ])
@@ -830,7 +850,11 @@ var render = function() {
                                   staticClass:
                                     "btn waves-effect waves-light pink darken-1",
                                   attrs: { type: "submit" },
-                                  on: { click: _vm.deleteOrder }
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.deleteOrder(order, index)
+                                    }
+                                  }
                                 },
                                 [
                                   _c("i", { staticClass: "material-icons" }, [
@@ -854,7 +878,8 @@ var render = function() {
       _c("modal-look-order", {
         attrs: {
           order: _vm.order_data,
-          "products-in-order": _vm.product_in_order,
+          "products-in-order": _vm.products_in_order,
+          currency: _vm.currency_in_order,
           total_sum: _vm.totalSumInOrder
         },
         on: { executeOrder: _vm.changeOrderStatus }

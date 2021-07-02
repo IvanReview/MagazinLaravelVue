@@ -31,12 +31,13 @@
                     </td>
                     <td><img height="56px" :src="`/storage/${product.image}`"></td>
                     <td><span class="badge">{{ product.pivot.quantity }}</span></td>
-                    <td> {{ product.price | currencyFilter }}</td>
-                    <td> {{ product.pivot.quantity * product.price | currencyFilter }}</td>
+                    <td> {{ product.pivot.price | currencyFilter(currency.code) }}</td>
+                    <td> {{ product.pivot.quantity * product.pivot.price | currencyFilter(currency.code) }}</td>
+
                   </tr>
                   <tr>
                     <td colspan="4"><b>Общая сумма:</b></td>
-                    <td><strong> {{ total_sum | currencyFilter }}</strong></td>
+                    <td><strong> {{ total_sum | currencyFilter(currency.code)  }}</strong></td>
                   </tr>
                   </tbody>
                 </table>
@@ -65,6 +66,7 @@ export default {
     props: {
       order: {},
       productsInOrder: {},
+      currency: {},
       total_sum: 0,
 
     },
@@ -82,6 +84,9 @@ export default {
         executeOrder() {
             this.$emit('executeOrder', this.order)
         }
+    },
+    updated() {
+
     },
     mounted() {
         this.modalInstanceOrder = window.M.Modal.init(this.$refs.modalOrder);
