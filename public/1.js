@@ -1611,7 +1611,7 @@ var render = function() {
               "li",
               {
                 class: [
-                  { active: _vm.getPagination.current_page === page.label }
+                  { active: _vm.getPagination.current_page == page.label }
                 ]
               },
               [

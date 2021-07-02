@@ -95,7 +95,7 @@
 
                 <!--Страницы-->
                 <li v-for="page of getPaginateOrder.pages"
-                    :class="[{active: getPaginateOrder.current_page === page.label}]"
+                    :class="[{active: getPaginateOrder.current_page == page.label}]"
                 >
                     <a href="" @click.prevent="loadOrders( page.url)">{{page.label}}</a>
                 </li>

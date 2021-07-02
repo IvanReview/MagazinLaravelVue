@@ -77,7 +77,7 @@
 
                 <!-- страницы -->
                 <li v-for="page of getPagination.pages"
-                    :class="[{active: getPagination.current_page === page.label}]"
+                    :class="[{active: getPagination.current_page == page.label}]"
                 >
                     <a href="" @click.prevent = "optionViewProducts( {page_url: page.url})"> {{page.label}} </a>
                 </li>

@@ -925,7 +925,7 @@ var render = function() {
                 "li",
                 {
                   class: [
-                    { active: _vm.getPaginateOrder.current_page === page.label }
+                    { active: _vm.getPaginateOrder.current_page == page.label }
                   ]
                 },
                 [

@@ -2516,7 +2516,7 @@ var render = function() {
                 class: [
                   {
                     active:
-                      _vm.getPaginationAdminProduct.current_page === page.label
+                      _vm.getPaginationAdminProduct.current_page == page.label
                   }
                 ]
               },

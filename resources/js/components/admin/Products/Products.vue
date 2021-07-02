@@ -108,7 +108,7 @@
                 </li>
 
                 <li v-for="page of getPaginationAdminProduct.pages"
-                    :class="[{active: getPaginationAdminProduct.current_page === page.label}]"
+                    :class="[{active: getPaginationAdminProduct.current_page == page.label}]"
                 >
                     <a href="" @click.prevent="loadProductsForAdmin( page.url)">{{page.label}}</a>
                 </li>
