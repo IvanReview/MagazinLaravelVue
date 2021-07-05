@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CommentRequest;
 use App\Models\Product;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -15,9 +16,10 @@ class CommentController extends Controller
      * @param Request $request
      * @param $id
      */
-    public function commentAdd(CommentRequest $request, $id)
+    public function commentAdd(CommentRequest $request, $id): JsonResponse
     {
         $data = $request->all();
+
         $product = Product::where('id', $id)->first();
 
         $comment = $product->comments()->create($data);

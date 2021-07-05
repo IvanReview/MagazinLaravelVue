@@ -56,6 +56,21 @@ export default {
                 })
         },
 
+        addCommentToDb({commit, state}, formData) {
+
+            return axios({
+                method: 'POST',
+                url: `/api/product/${formData.product_id}/comment`,
+                data: formData,
+            })
+                .then((response) => {
+                    if (response.status === 200){
+                        /*commit('accept_comment', response.data)*/
+                        return response
+                    }
+                })
+        },
+
         acceptComment({commit},formData) {
             return axios({
                 method: 'POST',

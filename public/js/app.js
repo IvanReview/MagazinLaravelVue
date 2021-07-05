@@ -115594,8 +115594,22 @@ var cart = window.localStorage.getItem('cart');
         console.log(error);
       });
     },
-    acceptComment: function acceptComment(_ref3, formData) {
-      var commit = _ref3.commit;
+    addCommentToDb: function addCommentToDb(_ref3, formData) {
+      var commit = _ref3.commit,
+          state = _ref3.state;
+      return axios({
+        method: 'POST',
+        url: "/api/product/".concat(formData.product_id, "/comment"),
+        data: formData
+      }).then(function (response) {
+        if (response.status === 200) {
+          /*commit('accept_comment', response.data)*/
+          return response;
+        }
+      });
+    },
+    acceptComment: function acceptComment(_ref4, formData) {
+      var commit = _ref4.commit;
       return axios({
         method: 'POST',
         url: "/api/admin/comments/".concat(formData.get("id")),
@@ -115612,10 +115626,10 @@ var cart = window.localStorage.getItem('cart');
         console.log(error);
       });
     },
-    deleteCommentFromBd: function deleteCommentFromBd(_ref4, _ref5) {
-      var commit = _ref4.commit;
-      var commentId = _ref5.commentId,
-          index = _ref5.index;
+    deleteCommentFromBd: function deleteCommentFromBd(_ref5, _ref6) {
+      var commit = _ref5.commit;
+      var commentId = _ref6.commentId,
+          index = _ref6.index;
       axios({
         method: 'DELETE',
         url: "/api/admin/comments/".concat(commentId)

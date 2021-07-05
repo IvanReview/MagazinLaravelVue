@@ -57,12 +57,15 @@ class MainController extends Controller
     {
         //берем только родительские комментарии внутри них вложенные(replies)
         // parent и status скоупы
-        $comments = $product->comments()->parent()->status()->with('replies', 'replies.replies')->get();
-        $users = User::get();
+        $comments = $product->comments()
+                        ->parent()
+                        ->status()
+                        ->with(['replies', 'replies.commentator', 'commentator',])
+                        ->get();
+
         $product = $product::with('galleryImages')->find($product->id);
 
-
-        return response()->json(['product' => $product, 'comments' => $comments, 'users' => $users],200);
+        return response()->json(['product' => $product, 'comments' => $comments],200);
     }
 
 

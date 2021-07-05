@@ -11,7 +11,9 @@
                         <div class="comment-wrapper" v-for="comment in comments_arr">
                             <li class="review-item" >
                                 <div class="images">
-                                    <img :src="comment.user_id ?`/storage/${authorOfComment(comment).image}`:'/img/avata-01.jpg'" alt="">
+                                    <img :src="(comment.commentator && comment.commentator.image)
+                                                ? `/storage/${comment.commentator.image}`
+                                                :'/img/avata-01.jpg'" alt="">
                                 </div>
                                 <div class="review-text">
                                     <div class="">
@@ -28,10 +30,11 @@
                                     </button>
                                 </div>
                             </li>
-                            <!--Дочернии комментарии-->
-                            <li class="review-item child" v-for="comm in comment_status_filter(comment.replies)">
+                            <!--Дочерний комментарии-->
+                            <li class="review-item child" v-for="comm in comment.replies">
                                 <div class="images">
-                                    <img :src="comm.user_id ?`/storage/${authorOfComment(comm).image}`:'/img/avata-02.jpg'" alt="">
+                                    <img :src="comm.user_id && comm.commentator.image
+                                            ? `/storage/${comm.commentator.image}` : '/img/avata-02.jpg'" alt="">
                                 </div>
                                 <div class="review-text">
                                     <div class="">
@@ -79,21 +82,7 @@
                         >
                             {{ errorsComment.text[0] }}
                         </span>
-                        <!--<div class="submit">
-                            <div class="rating-rev">
-                                <div class="rating-star">
-                                    <input type="radio" name="star-horizontal-rating" id="star-horizontal-rating-1">
-                                    <label for="star-horizontal-rating-1"><i class="fa fa-star"></i></label>
-                                    <input type="radio" name="star-horizontal-rating" id="star-horizontal-rating-2">
-                                    <label for="star-horizontal-rating-2"><i class="fa fa-star"></i></label>
-                                    <input type="radio" name="star-horizontal-rating" id="star-horizontal-rating-3">
-                                    <label for="star-horizontal-rating-3"><i class="fa fa-star"></i></label>
-                                    <input type="radio" name="star-horizontal-rating" id="star-horizontal-rating-4">
-                                    <label for="star-horizontal-rating-4"><i class="fa fa-star"></i></label>
-                                    <input type="radio" name="star-horizontal-rating" id="star-horizontal-rating-5">
-                                    <label for="star-horizontal-rating-5"><i class="fa fa-star"></i></label>
-                                </div>
-                            </div>-->
+
                         <div class="subreview">
                             <button type="submit" class="btn" ref="btnSubmit">
                                 <i class="material-icons left">comment</i>
@@ -123,13 +112,11 @@ export default {
             replyingTo: {},
             btnOldHtml: '',
             errorsComment: [],
-            test: this.comments_prop[0]
         }
     },
     props: {
         comment_prop: {},
         comments_prop: {},
-        users_prop: {},
         prodId_prop: ''
     },
     computed: {
@@ -144,13 +131,9 @@ export default {
     },
     methods: {
         ...mapActions([
-
+            'addCommentToDb'
         ]),
 
-        authorOfComment(comment) {
-            let user = this.users_prop.find(user => user.id === comment.user_id)
-            return user
-        },
 
         //установить параметры ответа на комментарий
         setReplyingTo(comment) {
@@ -173,38 +156,36 @@ export default {
         commentAdd() {
 
             buttons.disableSubmission(this.$refs.btnSubmit)
-            axios({
-                method: 'POST',
-                url: `/api/product/${this.prodId_prop}/comment`,
-                data: this.comment,
+
+            this.addCommentToDb(this.comment).then(response => {
+
+                buttons.enableSubmission(this.$refs.btnSubmit)
+
+                console.log(response)
+
+                if (! this.replyingTo.id) {
+                    this.comments.push(response.data)
+                } else {
+                    //дочерний коммент
+                    let index = this.comments.findIndex(item => item.id === response.data.parent_id)
+                    this.comments[index].replies.push(response.data)
+                }
+
+                //очистка данных
+                this.comment.text = ''
+                this.comment.parent_id = '0'
+                this.errorsComment = []
+                this.replyingTo = {}
+
+                this.$toasted.show(`Комментарий успешно добавлен`,{
+                    position: "bottom-left",
+                })
+            }).catch((error) => {
+                buttons.enableSubmission(this.$refs.btnSubmit)
+                this.errorsComment = error.response.data.errors
+
             })
-                .then((response) => {
 
-                    buttons.enableSubmission(this.$refs.btnSubmit)
-
-                    if (! this.replyingTo.id) {
-                        this.comments.push(response.data)
-                    } else {
-                        //дочерний коммент
-                        let index = this.comments.findIndex(item => item.id === response.data.parent_id)
-                        this.comments[index].replies.push(response.data)
-                    }
-
-                    //очистка данных
-                    this.comment.text = ''
-                    this.comment.parent_id = '0'
-                    this.errorsComment = []
-                    this.replyingTo = {}
-
-                    this.$toasted.show(`Комментарий успешно добавлен`,{
-                        position: "bottom-left",
-                    })
-                })
-                .catch((error) => {
-                    buttons.enableSubmission(this.$refs.btnSubmit)
-                    this.errorsComment = error.response.data.errors
-
-                })
         },
     },
 

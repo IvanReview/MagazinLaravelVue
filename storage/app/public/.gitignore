@@ -1,5 +1,6 @@
 *
 !.gitignore
 !/images
+!/user
 !*.jpg
 !*.jpeg

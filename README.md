@@ -7,55 +7,35 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## About Laravel
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Запуск приложения на локальном сервере
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+1. Скачать архив распаковать в любое место, зайти в папку и открыть в ней консоль.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+2. Запустить команду "composer install"
 
-## Learning Laravel
+3. Запустить команду "npm install"
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+4. Переименовать файл .env.example(в корне проекта) в .env
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+5. Создать у себя базу данных (например Mysql) и в файле .env задать настройки подключения к БД
+   (Название БД - DB_DATABASE, Логин - DB_USERNAME, Пароль - DB_PASSWORD )
 
-## Laravel Sponsors
+6. Запустить команду "php artisan key:generate"
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+7. Выполнить команду "php artisan migrate:refresh --seed"
 
-### Premium Partners
+8. Для Работы Авторизации выполнить "php artisan passport:install" <br>
+   Если Encryption keys уже есть тогда вместо 1 команды можно ввести "php artisan passport:client --personal" ввести любое имя, <br>
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[OP.GG](https://op.gg)**
+9. Для отображения картинок "php artisan storage:link" <br>
+   Добавить в .env строку "FILESYSTEM_DRIVER=public"(если нет) и
+   на всякий случай можно в строку APP_URL = http://ваш-URL добавить URL - если отличается от localhost
 
-## Contributing
+11. Запустить команду "php artisan serve" для запуска встроенного сервера и перейти по URL-адресу указанному в консоли
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+12. Данные для входа в админку Email - "**admin@mail.com**", Пароль - "**12345678**" <br>
 
-## Code of Conduct
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

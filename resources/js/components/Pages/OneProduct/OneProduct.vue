@@ -4,8 +4,8 @@
 
             <div class="row">
                 <div class="col s12 l6">
-                    <div class="images-product">
-                        <img class="materialboxed" :src="`/storage/${product.image}`" alt="prod" ref="main_img">
+                    <div class="images-product" style="display: flex; justify-content: center">
+                        <img class="" :src="`/storage/${product.image}`" alt="prod" ref="main_img">
                     </div>
 
                 <!--Галлерея-->
@@ -117,11 +117,10 @@
                     </div>
 
                     <!--Комментарии-->
-                    
+
                     <Reviews
                         :comment_prop="comment"
                         :comments_prop="comments"
-                        :users_prop="users"
                         :prod-id_prop="prodId"
                     />
 
@@ -164,7 +163,6 @@ export default {
         product: [],
         comments: {},
         loader: true,
-        users: [],
         gallery_images: [],
         comment: {
             name: '',
@@ -216,7 +214,6 @@ export default {
 
                     this.product = response.data.product
                     this.comments = response.data.comments
-                    this.users = response.data.users
                     this.comment.product_id = response.data.product.id
                 })
         },
@@ -242,11 +239,13 @@ export default {
 
         },
 
+        //Удалить товар из корзины
         decrementItem(product) {
             let index =  this.getProductsInCart.findIndex((product) => product.id == this.prodId )
             this.decrementCart(index)
         },
 
+        //Добавить товар в корзину
         incrementItem() {
             let index =  this.getProductsInCart.findIndex((prod) => prod.id == this.prodId )
             let product = this.getProductsInCart.find((prod) => prod.id == this.prodId )

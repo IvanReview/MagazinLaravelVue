@@ -166,7 +166,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
 
 
 
@@ -183,7 +182,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       product: [],
       comments: {},
       loader: true,
-      users: [],
       gallery_images: [],
       comment: {
         name: '',
@@ -226,7 +224,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
         _this2.product = response.data.product;
         _this2.comments = response.data.comments;
-        _this2.users = response.data.users;
         _this2.comment.product_id = response.data.product.id;
       });
     },
@@ -252,6 +249,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
       });
     },
+    //Удалить товар из корзины
     decrementItem: function decrementItem(product) {
       var _this4 = this;
 
@@ -260,6 +258,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
       this.decrementCart(index);
     },
+    //Добавить товар в корзину
     incrementItem: function incrementItem() {
       var _this5 = this;
 
@@ -408,17 +407,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 
@@ -431,14 +419,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       comment: this.comment_prop,
       replyingTo: {},
       btnOldHtml: '',
-      errorsComment: [],
-      test: this.comments_prop[0]
+      errorsComment: []
     };
   },
   props: {
     comment_prop: {},
     comments_prop: {},
-    users_prop: {},
     prodId_prop: ''
   },
   computed: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapGetters"])(['getErrorsWriteComment'])), {}, {
@@ -447,13 +433,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return this.comments;
     }
   }),
-  methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])([])), {}, {
-    authorOfComment: function authorOfComment(comment) {
-      var user = this.users_prop.find(function (user) {
-        return user.id === comment.user_id;
-      });
-      return user;
-    },
+  methods: _objectSpread(_objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_0__["mapActions"])(['addCommentToDb'])), {}, {
     //установить параметры ответа на комментарий
     setReplyingTo: function setReplyingTo(comment) {
       var _this = this;
@@ -480,12 +460,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var _this2 = this;
 
       _helpers_load_buttons__WEBPACK_IMPORTED_MODULE_1__["disableSubmission"](this.$refs.btnSubmit);
-      axios({
-        method: 'POST',
-        url: "/api/product/".concat(this.prodId_prop, "/comment"),
-        data: this.comment
-      }).then(function (response) {
+      this.addCommentToDb(this.comment).then(function (response) {
         _helpers_load_buttons__WEBPACK_IMPORTED_MODULE_1__["enableSubmission"](_this2.$refs.btnSubmit);
+        console.log(response);
 
         if (!_this2.replyingTo.id) {
           _this2.comments.push(response.data);
@@ -640,13 +617,19 @@ var render = function() {
     _c("div", { staticClass: "container" }, [
       _c("div", { staticClass: "row" }, [
         _c("div", { staticClass: "col s12 l6" }, [
-          _c("div", { staticClass: "images-product" }, [
-            _c("img", {
-              ref: "main_img",
-              staticClass: "materialboxed",
-              attrs: { src: "/storage/" + _vm.product.image, alt: "prod" }
-            })
-          ]),
+          _c(
+            "div",
+            {
+              staticClass: "images-product",
+              staticStyle: { display: "flex", "justify-content": "center" }
+            },
+            [
+              _c("img", {
+                ref: "main_img",
+                attrs: { src: "/storage/" + _vm.product.image, alt: "prod" }
+              })
+            ]
+          ),
           _vm._v(" "),
           _c(
             "div",
@@ -802,7 +785,6 @@ var render = function() {
               attrs: {
                 comment_prop: _vm.comment,
                 comments_prop: _vm.comments,
-                users_prop: _vm.users,
                 "prod-id_prop": _vm.prodId
               }
             }),
@@ -1055,10 +1037,11 @@ var render = function() {
                           _c("div", { staticClass: "images" }, [
                             _c("img", {
                               attrs: {
-                                src: comment.user_id
-                                  ? "/storage/" +
-                                    _vm.authorOfComment(comment).image
-                                  : "/img/avata-01.jpg",
+                                src:
+                                  comment.commentator &&
+                                  comment.commentator.image
+                                    ? "/storage/" + comment.commentator.image
+                                    : "/img/avata-01.jpg",
                                 alt: ""
                               }
                             })
@@ -1109,72 +1092,69 @@ var render = function() {
                           ])
                         ]),
                         _vm._v(" "),
-                        _vm._l(
-                          _vm.comment_status_filter(comment.replies),
-                          function(comm) {
-                            return _c(
-                              "li",
-                              { staticClass: "review-item child" },
-                              [
-                                _c("div", { staticClass: "images" }, [
-                                  _c("img", {
-                                    attrs: {
-                                      src: comm.user_id
-                                        ? "/storage/" +
-                                          _vm.authorOfComment(comm).image
+                        _vm._l(comment.replies, function(comm) {
+                          return _c(
+                            "li",
+                            { staticClass: "review-item child" },
+                            [
+                              _c("div", { staticClass: "images" }, [
+                                _c("img", {
+                                  attrs: {
+                                    src:
+                                      comm.user_id && comm.commentator.image
+                                        ? "/storage/" + comm.commentator.image
                                         : "/img/avata-02.jpg",
-                                      alt: ""
-                                    }
-                                  })
+                                    alt: ""
+                                  }
+                                })
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "review-text" }, [
+                                _c("div", {}, [
+                                  _c("h3", { staticClass: "name" }, [
+                                    _c("span", [_vm._v(_vm._s(comm.name))])
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("div", { staticClass: "des-rev" }, [
+                                    _vm._v(_vm._s(comm.text))
+                                  ])
                                 ]),
                                 _vm._v(" "),
-                                _c("div", { staticClass: "review-text" }, [
-                                  _c("div", {}, [
-                                    _c("h3", { staticClass: "name" }, [
-                                      _c("span", [_vm._v(_vm._s(comm.name))])
-                                    ]),
-                                    _vm._v(" "),
-                                    _c("div", { staticClass: "des-rev" }, [
-                                      _vm._v(_vm._s(comm.text))
-                                    ])
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("div", { staticClass: "button-wrapper" }, [
-                                    _c("div", { staticClass: "time" }, [
-                                      _vm._v(
-                                        _vm._s(
-                                          _vm._f("dateFilter")(comm.created_at)
-                                        )
+                                _c("div", { staticClass: "button-wrapper" }, [
+                                  _c("div", { staticClass: "time" }, [
+                                    _vm._v(
+                                      _vm._s(
+                                        _vm._f("dateFilter")(comm.created_at)
                                       )
-                                    ])
-                                  ]),
-                                  _vm._v(" "),
-                                  _c(
-                                    "button",
-                                    {
-                                      staticClass: "btn-small",
-                                      on: {
-                                        click: function($event) {
-                                          return _vm.setReplyingTo(comment)
-                                        }
+                                    )
+                                  ])
+                                ]),
+                                _vm._v(" "),
+                                _c(
+                                  "button",
+                                  {
+                                    staticClass: "btn-small",
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.setReplyingTo(comment)
                                       }
-                                    },
-                                    [
-                                      _c(
-                                        "i",
-                                        { staticClass: "material-icons left" },
-                                        [_vm._v("reply")]
-                                      ),
-                                      _vm._v(
-                                        "\n                                    ответить\n                                "
-                                      )
-                                    ]
-                                  )
-                                ])
-                              ]
-                            )
-                          }
-                        )
+                                    }
+                                  },
+                                  [
+                                    _c(
+                                      "i",
+                                      { staticClass: "material-icons left" },
+                                      [_vm._v("reply")]
+                                    ),
+                                    _vm._v(
+                                      "\n                                    ответить\n                                "
+                                    )
+                                  ]
+                                )
+                              ])
+                            ]
+                          )
+                        })
                       ],
                       2
                     )
